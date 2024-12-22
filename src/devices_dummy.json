@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "stm32mp15-disco",
+    "versions": ["1.0.0"],
+    "count": 10,
+    "available": 2
+  },
+  {
+    "id": 2,
+    "type": "Device B",
+    "versions": ["1.0.0", "1.1.0"],
+    "count": 15,
+    "available": 0
+  },
+  {
+    "id": 3,
+    "type": "Device C",
+    "versions": ["2", "2.1.0", "2.2.0"],
+    "count": 8,
+    "available": 1
+  },
+  {
+    "id": 4,
+    "type": "stm32mp15-disco",
+    "versions": ["2.0.0", "2.1.0"],
+    "count": 12,
+    "available": 4
+  },
+  {
+    "id": 5,
+    "type": "Device E",
+    "versions": ["3.0.0"],
+    "count": 20,
+    "available": 5
+  },
+  {
+    "id": 6,
+    "type": "Device F",
+    "versions": ["3.0.0", "3.1"],
+    "count": 18,
+    "available": 6
+  },
+  {
+    "id": 7,
+    "type": "stm32mp15-disco",
+    "versions": ["4.0", "4.1.0", "4.2.0"],
+    "count": 25,
+    "available": 0
+  },
+  {
+    "id": 8,
+    "type": "Device H",
+    "versions": ["4.0.0", "4.1.0"],
+    "count": 30,
+    "available": 8
+  },
+  {
+    "id": 9,
+    "type": "Device I",
+    "versions": ["5.0"],
+    "count": 22,
+    "available": 9
+  },
+  {
+    "id": 10,
+    "type": "Device J",
+    "versions": ["5.0.0", "5.1.0"],
+    "count": 28,
+    "available": 10
+  }
+]
