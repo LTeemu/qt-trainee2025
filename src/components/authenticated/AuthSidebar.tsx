@@ -18,12 +18,16 @@ export default function AuthSidebar({}: Props) {
       <ul className="[&>li]:gap-x-4 [&>span]:gap-x-4 [&>li]:flex [&>li]:items-center [&>li]:font-semibold grid gap-y-3">
         <li className={path === "/dashboard" ? "text-cyan-900" : ""}>
           <BiGridAlt size={24} />
-          <Link to="/dashboard">Dashboard</Link>
+          <Link id="dashboardLink" to="/dashboard">
+            Dashboard
+          </Link>
         </li>
 
         <li className={path.startsWith("/devices") ? "text-cyan-900" : ""}>
           <PiStackBold size={24} />
-          <Link to="/devices">Devices</Link>
+          <Link id="devicesLink" to="/devices">
+            Devices
+          </Link>
         </li>
 
         <span
@@ -50,12 +54,16 @@ export default function AuthSidebar({}: Props) {
 
         <li className={path === "/usagelogs" ? "text-cyan-900" : ""}>
           <BiNotepad size={24} />
-          <Link to="/usagelogs">Usage logs</Link>
+          <Link id="usagelogsLink" to="/usagelogs">
+            Usage logs
+          </Link>
         </li>
 
         <li className={path === "/settings" ? "text-cyan-900" : ""}>
           <RiSettings3Line size={24} />
-          <Link to="/settings">Settings</Link>
+          <Link id="settingsLink" to="/settings">
+            Settings
+          </Link>
         </li>
       </ul>
 
@@ -67,6 +75,7 @@ export default function AuthSidebar({}: Props) {
 
         <li>
           <button
+            id="logoutButton"
             className="h-min gap-x-4 flex items-center font-semibold"
             onClick={handleLogout}
           >

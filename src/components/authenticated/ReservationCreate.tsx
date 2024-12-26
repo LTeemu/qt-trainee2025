@@ -6,7 +6,13 @@ import { IoCloudUploadOutline } from "react-icons/io5";
 import Dropdown from "../general/Dropdown";
 import RadioButtonGroup from "../general/RadioButtonGroup";
 import Alert from "../general/Alert";
-import { AlertState, AlertType } from "../../types";
+import {
+  AlertState,
+  AlertType,
+  Device,
+  Reservation,
+  ReserveFormState,
+} from "../../types";
 
 const radioOptions = ["Select Qt version", "Upload your custom Qt version"];
 
@@ -14,9 +20,15 @@ const ReservationCreate = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const device = devices.find((device) => device.id === parseInt(id));
-  const [selectedRadio, setSelectedRadio] = useState(radioOptions[0]);
+  const [selectedRadio, setSelectedRadio] = useState(0);
   const [versionDropOpen, setVersionDropOpen] = useState(false);
   const [durationDropOpen, setDurationDropOpen] = useState(false);
+
+  const [formState, setFormState] = useState<ReserveFormState>({
+    qtversion: "",
+    duration: 0,
+    reason: "",
+  });
 
   const [alert, setAlert] = useState<AlertState>({
     type: "error",
@@ -36,20 +48,40 @@ const ReservationCreate = () => {
     if (!device) navigate("/devices");
   }, [device, navigate]);
 
-  const handleRadioChange = (option: string) => {
-    setSelectedRadio(option);
+  const handleRadioChange = (index: number) => {
+    setSelectedRadio(index);
     setDurationDropOpen(false);
     setVersionDropOpen(false);
   };
 
+  const reserveDevice = (device: Device, form: ReserveFormState) => {
+    const reservations: Reservation[] = JSON.parse(
+      localStorage.getItem("reservations") ?? "[]"
+    );
+    const newReservation: Reservation = {
+      device_id: device.id,
+      device_type: device.type,
+      device_version: form.qtversion,
+      reservation_time: new Date().toISOString(),
+      reservation_duration: form.duration,
+      reservation_reason: form.reason,
+    };
+    reservations.push(newReservation);
+    localStorage.setItem("reservations", JSON.stringify(reservations));
+  };
+
   const handleReserve = () => {
+    hideAlert();
     if (!device) return;
-    // Dummy reservation logic
+
+    if (formState.duration === 0 || formState.qtversion === "") {
+      showAlert("error", "Qt version and time duration are required!");
+      return;
+    }
+
     if (device.available > 0) {
       device.available -= 1;
-      let reservedIds = JSON.parse(localStorage.getItem("reserved_ids")) || [];
-      reservedIds.push(device.id);
-      localStorage.setItem("reserved_ids", JSON.stringify(reservedIds));
+      reserveDevice(device, formState);
       navigate("/dashboard", {
         state: { message: "Device reserved successfully!", type: "success" },
       });
@@ -81,12 +113,7 @@ const ReservationCreate = () => {
       </p>
 
       {alert.isVisible && (
-        <Alert
-          type="error"
-          message="The device is not available, please try again or choose another
-          device!"
-          onClose={() => null}
-        />
+        <Alert type={alert.type} message={alert.message} onClose={hideAlert} />
       )}
 
       <Link
@@ -106,12 +133,16 @@ const ReservationCreate = () => {
 
         <div className="flex flex-col lg:flex-row gap-x-2 mt-2">
           <Dropdown
+            baseID="customQtVersionDropdown"
             options={device.versions}
             isOpen={versionDropOpen}
-            setStateFunc={setVersionDropOpen}
+            setOpenStateFunc={setVersionDropOpen}
+            onOptionChange={(value) =>
+              setFormState((prevState) => ({ ...prevState, qtversion: value }))
+            }
             placeholder="Custom Qt version"
             containerClassName={`w-full lg:w-1/2 ${
-              selectedRadio === radioOptions[0]
+              selectedRadio === 0
                 ? ""
                 : "opacity-50 contrast-50 pointer-events-none"
             }`}
@@ -121,7 +152,7 @@ const ReservationCreate = () => {
             className={`w-full px-4 mt-2 lg:mt-0 py-1 lg:w-1/2 h-full 
           overflow-clip flex items-center justify-between 
           bg-white border-2 rounded-md border-gray-300 ${
-            selectedRadio === radioOptions[1]
+            selectedRadio === 1
               ? ""
               : "opacity-50 contrast-50 pointer-events-none"
           }`}
@@ -141,32 +172,52 @@ const ReservationCreate = () => {
         </div>
 
         <p className="mt-2 mb-1">
-          Select time duration <span className="text-red-700">*</span>
+          Select time duration
+          {selectedRadio === 0 && <span className="text-red-700"> *</span>}
         </p>
 
         <Dropdown
+          baseID="durationDropdown"
           options={Array.from({ length: 24 }, (_, i) => `${i + 1} Hour`)}
           isOpen={durationDropOpen}
-          setStateFunc={setDurationDropOpen}
+          setOpenStateFunc={setDurationDropOpen}
+          onOptionChange={(value) =>
+            setFormState((prevState) => ({
+              ...prevState,
+              duration: parseInt(value),
+            }))
+          }
           placeholder="Duration"
           containerClassName="pr-1 w-full lg:w-1/2"
         />
 
         <p className="mt-2">Reason for reservation</p>
 
-        <textarea className="bg-white border-2 h-24 rounded-md min-h-24 max-h-[600px] py-1 px-2"></textarea>
+        <textarea
+          id="reasonTextbox"
+          onChange={(e) =>
+            setFormState((prevState) => ({
+              ...prevState,
+              reason: e.target.value,
+            }))
+          }
+          className="bg-white border-2 h-24 rounded-md min-h-24 max-h-[600px] py-1 px-2"
+        />
 
         <p className="mt-1 text-xs opacity-60">
           Reservation will start right now if the device is available!
         </p>
 
         <button
+          id="reserveDeviceButton"
           disabled={device?.available <= 0}
           className="bg-cyan-800 rounded-md text-nowrap px-4 mt-3 w-min text-white disabled:opacity-25 p-1"
           onClick={handleReserve}
         >
           Reserve device
         </button>
+
+        <p>{JSON.stringify(formState)}</p>
       </div>
     </div>
   );

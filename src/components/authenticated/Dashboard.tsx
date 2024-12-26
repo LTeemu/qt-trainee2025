@@ -1,32 +1,57 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import SearchInput from "../general/SearchInput";
 import { MdOutlineRefresh } from "react-icons/md";
-import devices from "../../devices_dummy.json";
 import DashboardTable from "./DashboardTable";
 import Alert from "../general/Alert";
-import { AlertState, AlertType } from "../../types";
+import {
+  AlertState,
+  AlertType,
+  DashboardTableRef,
+  Reservation,
+} from "../../types";
 
 type Props = {};
 
 export default function Dashboard({}: Props) {
-  const [reservedIds, setReservedIds] = useState<Number[]>([]);
-  const [infoHidden, setInfoHidden] = useState<boolean>(false);
-
   const location = useLocation();
+  const reservations: Reservation[] = JSON.parse(
+    localStorage.getItem("reservations") ?? "[]"
+  );
+  const [searchWord, setSearchWord] = useState("");
   const [alert, setAlert] = useState<AlertState>({
     type: "error",
     message: "",
     isVisible: false,
   });
+  const tableRef = useRef<DashboardTableRef>(null);
+  const [isFirstTimeLogin, setIsFirstTimeLogin] = useState<boolean>(false);
+  const [gettingStartedVisible, setGettingStartedVisible] =
+    useState<boolean>(isFirstTimeLogin);
 
-  const showAlert = (type: AlertType, message: string) => {
+  const handleRefresh = () => {
+    if (tableRef.current) {
+      tableRef.current.refresh();
+    }
+  };
+
+  const showAlert = (type: AlertType, message: React.ReactNode) => {
     setAlert({ type, message, isVisible: true });
   };
 
   const hideAlert = () => {
     setAlert((prevState) => ({ ...prevState, isVisible: false }));
   };
+
+  useEffect(() => {
+    const firstTime = localStorage.getItem("first-time-login");
+
+    if (!firstTime) {
+      setIsFirstTimeLogin(true);
+      setGettingStartedVisible(true);
+      localStorage.setItem("first-time-login", "false");
+    }
+  }, []);
 
   useEffect(() => {
     const message = location.state?.message;
@@ -36,26 +61,21 @@ export default function Dashboard({}: Props) {
     }
   }, [location]);
 
-  useEffect(() => {
-    const storedIds = localStorage.getItem("reserved_ids");
-    if (storedIds) {
-      const ids = JSON.parse(storedIds);
-      setReservedIds(ids);
-    }
-  }, []);
-
   return (
     <div className="grid h-min max-h-full w-full">
-      <h1 className="text-4xl">Dashboard</h1>
+      <h1 id="dashboardHeading" className="text-4xl">
+        {isFirstTimeLogin ? "Welcome" : "Dashboard"}
+      </h1>
 
       <p className="my-3">
-        The dashboard shows all your current device reservations. To view
-        connection instructions or manage your reservation, click on the device
-        name or the desired row.
+        {isFirstTimeLogin
+          ? "Welcome to the Qt Hardware Cloud App! Here's a quick guide to help you get started: Explore available devices, reserve them for your projects, and manage your reservations easily, follow the instructions to get connected and start working."
+          : "The dashboard shows all your current device reservations. To view connection instructions or manage your reservation, click on the device name or the desired row."}
       </p>
 
       {alert.isVisible && (
         <Alert
+          id="dashboardTopAlert"
           type={alert.type}
           message={alert.message}
           onClose={hideAlert}
@@ -67,6 +87,7 @@ export default function Dashboard({}: Props) {
         <p className="text-xl font-semibold">Reservations</p>
 
         <Link
+          id="reserveDeviceLink"
           to="/devices"
           className="bg-cyan-800 text-white py-2 px-4 rounded-md"
         >
@@ -75,9 +96,13 @@ export default function Dashboard({}: Props) {
       </div>
 
       <div className="flex gap-x-2 my-2">
-        <SearchInput />
+        <SearchInput onChange={(e) => setSearchWord(e.target.value)} />
 
-        <button className="bg-white rounded-md border-gray-200 border-2 flex gap-x-2 items-center px-2">
+        <button
+          id="refreshButton"
+          onClick={handleRefresh}
+          className="bg-white rounded-md border-gray-200 border-2 flex gap-x-2 items-center px-2"
+        >
           <MdOutlineRefresh size={20} />
           <span>Refresh</span>
         </button>
@@ -85,12 +110,16 @@ export default function Dashboard({}: Props) {
 
       <div className="flex flex-col max-w-full overflow-x-auto">
         <DashboardTable
-          devices={devices.filter((device) => reservedIds.includes(device.id))}
+          ref={tableRef}
+          reservations={reservations.filter((res) =>
+            res.device_type.toLowerCase().includes(searchWord)
+          )}
         />
       </div>
 
-      {!infoHidden && (
+      {gettingStartedVisible && (
         <Alert
+          id="gettingStartedAlert"
           type="info"
           title="Getting started"
           message={
@@ -110,7 +139,7 @@ export default function Dashboard({}: Props) {
               </Link>
             </p>
           }
-          onClose={() => setInfoHidden(true)}
+          onClose={() => setGettingStartedVisible(false)}
           containerClassName="mt-4"
         />
       )}

@@ -7,6 +7,7 @@ export default function Alert({
   onClose,
   containerClassName,
   title,
+  id,
 }: AlertProps) {
   const alertStyles = {
     success: {
@@ -30,11 +31,12 @@ export default function Alert({
 
   return (
     <div
+      id={id}
       className={`${bgColor} ${textColor} ${containerClassName} px-6 py-3 rounded-md mt-2`}
     >
       <div className="flex justify-between mb-3">
         <span className="font-semibold text-xl">{title || defaultTitle}</span>
-        <button onClick={onClose}>
+        <button id={`${id}CloseButton`} onClick={onClose}>
           <IoMdClose size={28} />
         </button>
       </div>

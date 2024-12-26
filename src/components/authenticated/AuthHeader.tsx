@@ -8,11 +8,14 @@ export default function Header({}: Props) {
   const loggedUser = localStorage.getItem("logged_user");
 
   return (
-    <header className="flex-row justify-between py-3 px-4 flex shadow-[0px_3px_3px_0px_#1a202c22]">
+    <header className="sm:flex-row flex-col justify-between py-3 px-4 flex shadow-[0px_3px_3px_0px_#1a202c22]">
       <QTLogo />
 
       {loggedUser && (
-        <span className="flex items-center gap-x-2 font-bold">
+        <span
+          id="usernameDisplay"
+          className="flex items-center gap-x-2 font-bold"
+        >
           <BiSolidUser
             size={28}
             style={{

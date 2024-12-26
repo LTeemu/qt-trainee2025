@@ -5,6 +5,13 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { FaChevronRight } from "react-icons/fa";
 import RadioButtonGroup from "../general/RadioButtonGroup";
 import devices from "../../devices_dummy.json";
+import {
+  AlertState,
+  AlertType,
+  Reservation,
+  ReserveFormState,
+} from "../../types";
+import Alert from "../general/Alert";
 
 const radioOptions = ["Select Qt version", "Upload your custom Qt version"];
 
@@ -13,37 +20,88 @@ type Props = {};
 export default function ReservationEdit({}: Props) {
   const { id } = useParams();
   const navigate = useNavigate();
-  const device = devices.find((device) => device.id === parseInt(id));
-  const [selectedRadio, setSelectedRadio] = useState(radioOptions[0]);
+  const reservation = (
+    JSON.parse(localStorage.getItem("reservations") || "[]") as Reservation[]
+  ).find((reservation) => reservation.device_id === Number(id));
+  const device = devices.find((device) => device.id === reservation?.device_id);
+  const [selectedRadio, setSelectedRadio] = useState(0);
   const [versionDropOpen, setVersionDropOpen] = useState(false);
   const [durationDropOpen, setDurationDropOpen] = useState(false);
+
+  const [alert, setAlert] = useState<AlertState>({
+    type: "error",
+    message: "",
+    isVisible: false,
+  });
+
+  const showAlert = (type: AlertType, message: string) => {
+    setAlert({ type, message, isVisible: true });
+  };
+
+  const hideAlert = () => {
+    setAlert((prevState) => ({ ...prevState, isVisible: false }));
+  };
 
   useEffect(() => {
     if (!device) navigate("/devices");
   }, [device, navigate]);
 
-  const handleRadioChange = (option: string) => {
-    setSelectedRadio(option);
+  const [formState, setFormState] = useState<ReserveFormState>({
+    qtversion: reservation?.device_version ?? (device?.versions[0] as string),
+    duration: reservation?.reservation_duration ?? 1,
+    reason: reservation?.reservation_reason ?? "",
+  });
+
+  const handleRadioChange = (index: number) => {
+    setSelectedRadio(index);
     setDurationDropOpen(false);
     setVersionDropOpen(false);
   };
 
-  const handleEdit = () => {
-    if (!device) return;
-    // Dummy reservation logic
-    if (device.available > 0) {
-      device.available -= 1;
-      let reservedIds = JSON.parse(localStorage.getItem("reserved_ids")) || [];
-      reservedIds.push(device.id);
-      localStorage.setItem("reserved_ids", JSON.stringify(reservedIds));
-      alert("Device reserved successfully!");
-      navigate("/devices");
-    } else {
-      alert("No devices available for reservation.");
-    }
+  const editReservation = (
+    reservationID: number,
+    formState: ReserveFormState
+  ) => {
+    const reservations = JSON.parse(
+      localStorage.getItem("reservations") || "[]"
+    ) as Reservation[];
+    reservations[reservationID] = {
+      ...reservations[reservationID],
+      device_version: formState.qtversion,
+      reservation_time: new Date().toISOString(),
+      reservation_duration: formState.duration,
+      reservation_reason: formState.reason,
+    };
+
+    localStorage.setItem("reservations", JSON.stringify(reservations));
   };
 
-  if (!device) return null;
+  const handleEdit = () => {
+    if (formState.duration === 0 || formState.qtversion === "") {
+      showAlert("error", "Qt version and time duration are required!");
+      return;
+    }
+
+    const reservations = JSON.parse(
+      localStorage.getItem("reservations") || "[]"
+    ) as Reservation[];
+    if (reservations.length < 1) return;
+
+    const reservationID = reservations.findIndex(
+      (res) => res.device_id === reservation?.device_id
+    );
+    if (reservationID === -1) return;
+
+    editReservation(reservationID, formState);
+    navigate("/dashboard", {
+      state: {
+        message: "Device reservation edited successfully!",
+        type: "success",
+      },
+    });
+  };
+
+  if (!device || !reservation) return null;
 
   return (
     <div>
@@ -56,7 +114,7 @@ export default function ReservationEdit({}: Props) {
       </span>
 
       <p className="font-semibold mt-3 mb-1 text-xl">
-        Reserve Device: {device.type}
+        Reserve Device: {reservation.device_type}
       </p>
 
       <p>
@@ -64,6 +122,10 @@ export default function ReservationEdit({}: Props) {
         reservation, the device will begin preparing the necessary installations
         and granting access.
       </p>
+
+      {alert.isVisible && (
+        <Alert type={alert.type} message={alert.message} onClose={hideAlert} />
+      )}
 
       <Link
         to="#nowhere"
@@ -83,12 +145,17 @@ export default function ReservationEdit({}: Props) {
 
         <div className="flex flex-col lg:flex-row gap-x-2 mt-2">
           <Dropdown
+            baseID="customQtVersionDropdown"
             options={device.versions}
+            defaultValue={reservation.device_version}
             isOpen={versionDropOpen}
-            setStateFunc={setVersionDropOpen}
+            setOpenStateFunc={setVersionDropOpen}
+            onOptionChange={(value) =>
+              setFormState((prevState) => ({ ...prevState, qtversion: value }))
+            }
             placeholder="Custom Qt version"
             containerClassName={`w-full lg:w-1/2 ${
-              selectedRadio === radioOptions[0]
+              selectedRadio === 0
                 ? ""
                 : "opacity-50 contrast-50 pointer-events-none"
             }`}
@@ -98,7 +165,7 @@ export default function ReservationEdit({}: Props) {
             className={`w-full px-4 mt-2 lg:mt-0 py-1 lg:w-1/2 h-full 
           overflow-clip flex items-center justify-between 
           bg-white border-2 rounded-md border-gray-300 ${
-            selectedRadio === radioOptions[1]
+            selectedRadio === 1
               ? ""
               : "opacity-50 contrast-50 pointer-events-none"
           }`}
@@ -118,32 +185,54 @@ export default function ReservationEdit({}: Props) {
         </div>
 
         <p className="mt-2 mb-1">
-          Select time duration <span className="text-red-700">*</span>
+          Select time duration{" "}
+          {selectedRadio === 0 && <span className="text-red-700"> *</span>}
         </p>
 
         <Dropdown
+          baseID="durationDropdown"
           options={Array.from({ length: 24 }, (_, i) => `${i + 1} Hour`)}
+          defaultValue={reservation.reservation_duration + " Hour"}
           isOpen={durationDropOpen}
-          setStateFunc={setDurationDropOpen}
+          setOpenStateFunc={setDurationDropOpen}
+          onOptionChange={(value) =>
+            setFormState((prevState) => ({
+              ...prevState,
+              duration: parseInt(value),
+            }))
+          }
           placeholder="Duration"
           containerClassName="pr-1 w-full lg:w-1/2"
         />
 
         <p className="mt-2">Reason for reservation</p>
 
-        <textarea className="bg-white border-2 h-24 rounded-md min-h-24 max-h-[600px] py-1 px-2"></textarea>
+        <textarea
+          id="reasonTextbox"
+          defaultValue={formState.reason}
+          onChange={(e) =>
+            setFormState((prevState) => ({
+              ...prevState,
+              reason: e.target.value,
+            }))
+          }
+          className="bg-white border-2 h-24 rounded-md min-h-24 max-h-[600px] py-1 px-2"
+        />
 
         <p className="mt-1 text-xs opacity-60">
           Reservation will start right now if the device is available!
         </p>
 
         <button
-          disabled={device?.available <= 0}
+          id="editReservationButton"
+          //disabled={device?.available <= 0}
           className="bg-cyan-800 rounded-md text-nowrap px-4 mt-3 w-min text-white disabled:opacity-25 p-1"
           onClick={handleEdit}
         >
           Edit
         </button>
+
+        <p>{JSON.stringify(formState)}</p>
       </div>
     </div>
   );

@@ -2,10 +2,13 @@ import devices from "../../devices_dummy.json";
 import DeviceTable from "./DevicesTable";
 import SearchInput from "../general/SearchInput";
 import { MdOutlineRefresh, MdSwapVert } from "react-icons/md";
+import { useState } from "react";
 
 type Props = {};
 
 export default function Devices({}: Props) {
+  const [searchWord, setSearchWord] = useState("");
+
   return (
     <div className="grid h-min max-h-full">
       <h1 className="text-4xl">Devices</h1>
@@ -22,7 +25,7 @@ export default function Devices({}: Props) {
         <p className="font-semibold text-lg">Available Device</p>
 
         <div className="flex gap-x-2 my-2">
-          <SearchInput />
+          <SearchInput onChange={(e) => setSearchWord(e.target.value)} />
 
           <button className="bg-white rounded-md border-gray-200 border-2 flex gap-x-2 items-center px-2">
             <MdSwapVert size={20} />
@@ -36,7 +39,11 @@ export default function Devices({}: Props) {
         </div>
 
         <div className="flex flex-col max-w-full overflow-x-auto">
-          <DeviceTable devices={devices} />
+          <DeviceTable
+            devices={devices.filter((dev) =>
+              dev.type.toLowerCase().includes(searchWord)
+            )}
+          />
         </div>
       </div>
     </div>

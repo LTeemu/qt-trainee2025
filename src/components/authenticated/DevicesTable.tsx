@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaChevronRight } from "react-icons/fa";
+import { LuChevronDown } from "react-icons/lu";
+import { Device } from "../../types";
 
-const DevicesTable = ({ devices }) => {
-  const [reservedIds, setReservedIds] = useState([]);
+type Props = {
+  devices: Device[];
+};
+
+const DevicesTable = ({ devices }: Props) => {
+  const [reservedIds, setReservedIds] = useState<Number[]>([]);
 
   useEffect(() => {
     const storedIds = localStorage.getItem("reserved_ids");
@@ -16,19 +22,28 @@ const DevicesTable = ({ devices }) => {
   return (
     <table className="bg-white">
       <thead>
-        <tr className="[&>th]:px-4 [&>th]:text-nowrap [&>th]:font-semibold [&>th]:bg-cyan-800 [&>th]:text-white [&>th]:py-2 [&>th]:border-cyan-900 [&>th]:text-start [&>th]:border-x-2">
+        <tr className="[&>th]:px-4 border-b-2 border-b-cyan-900 [&>th]:text-nowrap [&>th]:font-semibold [&>th]:bg-cyan-800 [&>th]:text-white [&>th]:py-2 [&>th]:border-cyan-900 [&>th]:text-start [&>th]:border-x-2">
           <th>Device Type</th>
-          <th className="w-full">Qt Version</th>
-          <th>Availability</th>
+          <th className="w-full">
+            <span className="flex justify-between gap-x-2 items-center">
+              Qt Version <LuChevronDown size={16} />
+            </span>
+          </th>
+
+          <th>
+            <span className="flex justify-between gap-x-2 items-center">
+              Availability <LuChevronDown size={16} />
+            </span>
+          </th>
           <th></th>
         </tr>
       </thead>
 
       <tbody>
         {devices?.length > 0 ? (
-          devices.map((device) => {
+          devices.map((device, index) => {
             const cantReserve =
-              reservedIds.includes(device.id) || device.available <= 1;
+              reservedIds.includes(device.id) || device.available <= 0;
 
             return (
               <tr
@@ -37,6 +52,7 @@ const DevicesTable = ({ devices }) => {
               >
                 <td className="py-2 px-4">
                   <Link
+                    id={`reserveDevice${device.id}`}
                     to={`/devices/reservation/create/${device.id}`}
                     className={`text-cyan-900 font-semibold ${
                       cantReserve ? "pointer-events-none opacity-50" : ""
@@ -57,7 +73,8 @@ const DevicesTable = ({ devices }) => {
                 </td>
                 <td className="py-2 px-4">
                   <span
-                    className={`rounded-full flex px-2 py-0.5
+                    id={`device${index}AvailabilityText`}
+                    className={`rounded-full px-2 py-0.5
                     ${
                       device.available === 0
                         ? "bg-red-200 text-red-800"

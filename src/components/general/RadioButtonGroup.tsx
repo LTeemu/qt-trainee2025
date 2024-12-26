@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 type RadioButtonGroupProps = {
   options: string[];
-  onChange?: (selectedOption: string) => void;
+  onChange?: (selectedIndex: number) => void; // Changed to pass index
   containerClassName?: string;
 };
 
@@ -11,26 +11,30 @@ const RadioButtonGroup: React.FC<RadioButtonGroupProps> = ({
   onChange,
   containerClassName,
 }) => {
-  const [selectedOption, setSelectedOption] = useState<string>(options[0]);
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
-  const handleOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedValue = event.target.value;
-    setSelectedOption(selectedValue);
-    if (onChange) onChange(selectedValue);
+  const handleOptionChange = (index: number) => {
+    setSelectedIndex(index);
+    if (onChange) onChange(index);
   };
 
   return (
     <div className={containerClassName}>
-      {options.map((option) => (
-        <label key={option} className="flex gap-x-2 font-semibold text-sm">
+      {options.map((option, index) => (
+        <label key={index} className="flex gap-x-2 font-semibold text-sm">
           <input
             type="radio"
             name="radioGroup"
             value={option}
-            checked={selectedOption === option}
-            onChange={handleOptionChange}
+            checked={selectedIndex === index}
+            onChange={() => handleOptionChange(index)}
           />
-          <span className="text-nowrap">{option}</span>
+          <span className="text-nowrap">
+            {option}
+            {selectedIndex === index && (
+              <span className="text-red-700"> *</span>
+            )}
+          </span>
         </label>
       ))}
     </div>

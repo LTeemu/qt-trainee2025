@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { GoChevronDown } from "react-icons/go";
 
 type DropdownProps = {
@@ -6,7 +6,10 @@ type DropdownProps = {
   placeholder?: string;
   containerClassName?: string;
   isOpen: boolean;
-  setStateFunc: (isOpen: boolean) => void;
+  setOpenStateFunc: (isOpen: boolean) => void;
+  onOptionChange: (option: string) => void;
+  defaultValue?: string;
+  baseID?: string;
 };
 
 const Dropdown = ({
@@ -14,13 +17,19 @@ const Dropdown = ({
   placeholder,
   containerClassName,
   isOpen,
-  setStateFunc,
+  setOpenStateFunc,
+  onOptionChange,
+  defaultValue,
+  baseID,
 }: DropdownProps) => {
-  const [selectedOption, setSelectedOption] = useState<string>("");
+  const [selectedOption, setSelectedOption] = useState<string>(
+    defaultValue ?? ""
+  );
 
   const handleOptionClick = (option: string) => {
     setSelectedOption(option);
-    setStateFunc(false); // Close the dropdown after selecting an option
+    setOpenStateFunc(false);
+    onOptionChange(option);
   };
 
   return (
@@ -29,13 +38,14 @@ const Dropdown = ({
     >
       <div>
         <button
+          id={baseID}
           type="button"
           className={`inline-flex justify-between w-full rounded-md border-2 border-gray-300 
             px-4 py-2 bg-white text-sm text-gray-700 
             hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
               selectedOption === "" ? "text-black/60" : ""
             }`}
-          onClick={() => setStateFunc(!isOpen)}
+          onClick={() => setOpenStateFunc(!isOpen)}
         >
           {selectedOption || placeholder || "Select an option"}
 
@@ -57,9 +67,10 @@ const Dropdown = ({
             aria-orientation="vertical"
             aria-labelledby="options-menu"
           >
-            {options.map((option) => (
+            {options.map((option, index) => (
               <button
                 key={option}
+                id={`${baseID}-option-${index}`}
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full text-left"
                 onClick={() => handleOptionClick(option)}
               >
