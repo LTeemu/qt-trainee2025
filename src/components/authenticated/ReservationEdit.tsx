@@ -85,6 +85,11 @@ export default function ReservationEdit({}: Props) {
   const handleEdit = () => {
     if (!id) return;
 
+    if (selectedRadio === 1) {
+      showAlert("error", "Custom Qt version feature unavailable");
+      return;
+    }
+
     if (formState.duration === 0 || formState.qtversion === "") {
       showAlert("error", "Qt version and time duration are required!");
       return;

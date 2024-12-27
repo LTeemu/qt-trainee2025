@@ -11,7 +11,7 @@ export default function AuthSidebar({}: Props) {
 
   const handleLogout = () => {
     localStorage.removeItem("logged_user");
-    navigate("/login");
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -68,7 +68,7 @@ export default function AuthSidebar({}: Props) {
         </li>
       </ul>
 
-      <ul className="gap-y-3 grid mt-8 sm:mt-0">
+      <ul className="gap-y-3 grid mt-6">
         <li className="gap-x-4 flex items-center font-semibold">
           <PiQuestionBold size={24} />
           <Link to="#">Support Center</Link>

@@ -96,7 +96,9 @@ export default function Dashboard({}: Props) {
       </div>
 
       <div className="flex gap-x-1.5 my-2">
-        <SearchInput onChange={(e) => setSearchWord(e.target.value)} />
+        <SearchInput
+          onChange={(e) => setSearchWord(e.target.value.toLowerCase())}
+        />
 
         <button
           id="refreshButton"

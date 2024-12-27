@@ -25,7 +25,9 @@ export default function Devices({}: Props) {
         <p className="font-semibold text-xl">Available Device</p>
 
         <div className="flex gap-x-1.5 my-2 flex-col md:flex-row">
-          <SearchInput onChange={(e) => setSearchWord(e.target.value)} />
+          <SearchInput
+            onChange={(e) => setSearchWord(e.target.value.toLowerCase())}
+          />
 
           <div className="flex gap-x-1.5 mt-1 md:mt-0 self-end md:self-auto">
             <button className="cursor-not-allowed bg-white rounded-md border-gray-200 border-2 flex gap-x-2 items-center p-2">

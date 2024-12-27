@@ -1,4 +1,4 @@
-import { useEffect, useState, SyntheticEvent } from "react";
+import { useEffect, useState, SyntheticEvent, useCallback } from "react";
 import { throttle } from "lodash";
 
 type ScrollGradientProps = {
@@ -15,25 +15,31 @@ const ScrollGradient = ({ e, targetOffsetX = 15 }: ScrollGradientProps) => {
     isAtRight: true,
   });
 
-  const handleScroll = (event: SyntheticEvent<HTMLElement>) => {
-    const { scrollLeft, scrollWidth, clientWidth } =
-      event.target as HTMLElement;
-    const isAtLeft = scrollLeft <= targetOffsetX;
-    const isAtRight = clientWidth + scrollLeft >= scrollWidth - targetOffsetX;
-    const hasScrollBar = clientWidth < scrollWidth;
+  // Memoize throttled function to avoid re-creation on every render
+  const handleScroll = useCallback(
+    (event: SyntheticEvent<HTMLElement>) => {
+      const { scrollLeft, scrollWidth, clientWidth } =
+        event.target as HTMLElement;
+      const isAtLeft = scrollLeft <= targetOffsetX;
+      const isAtRight = clientWidth + scrollLeft >= scrollWidth - targetOffsetX;
+      const hasScrollBar = clientWidth < scrollWidth;
 
-    setScrollPosition((prev) => {
-      if (
-        prev.isAtLeft === isAtLeft &&
-        prev.isAtRight === (!hasScrollBar || isAtRight)
-      ) {
-        return prev;
-      }
-      return { isAtLeft, isAtRight: !hasScrollBar || isAtRight };
-    });
-  };
+      setScrollPosition((prev) => {
+        if (
+          prev.isAtLeft === isAtLeft &&
+          prev.isAtRight === (!hasScrollBar || isAtRight)
+        ) {
+          return prev;
+        }
+        return { isAtLeft, isAtRight: !hasScrollBar || isAtRight };
+      });
+    },
+    [targetOffsetX]
+  );
 
-  const throttledHandleScroll = throttle(handleScroll, 300);
+  const throttledHandleScroll = useCallback(throttle(handleScroll, 300), [
+    handleScroll,
+  ]);
 
   useEffect(() => {
     if (e) {
