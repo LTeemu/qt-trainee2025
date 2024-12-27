@@ -2,11 +2,12 @@ import { FaSearch } from "react-icons/fa";
 
 type Props = {
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  containerClassName?: string;
 };
 
-const SearchInput = ({ onChange }: Props) => {
+const SearchInput = ({ onChange, containerClassName }: Props) => {
   return (
-    <div className="relative flex-1">
+    <div className={`${containerClassName} relative flex-1`}>
       <FaSearch
         size={20}
         color="gray"

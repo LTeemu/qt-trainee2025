@@ -67,7 +67,7 @@ export default function Dashboard({}: Props) {
         {isFirstTimeLogin ? "Welcome" : "Dashboard"}
       </h1>
 
-      <p className="my-3">
+      <p className="mt-3 mb-6">
         {isFirstTimeLogin
           ? "Welcome to the Qt Hardware Cloud App! Here's a quick guide to help you get started: Explore available devices, reserve them for your projects, and manage your reservations easily, follow the instructions to get connected and start working."
           : "The dashboard shows all your current device reservations. To view connection instructions or manage your reservation, click on the device name or the desired row."}
@@ -95,7 +95,7 @@ export default function Dashboard({}: Props) {
         </Link>
       </div>
 
-      <div className="flex gap-x-2 my-2">
+      <div className="flex gap-x-1.5 my-2">
         <SearchInput onChange={(e) => setSearchWord(e.target.value)} />
 
         <button
@@ -108,15 +108,13 @@ export default function Dashboard({}: Props) {
         </button>
       </div>
 
-      <div className="flex flex-col max-w-full overflow-x-auto">
-        <DashboardTable
-          ref={tableRef}
-          reservations={reservations.filter((res) =>
-            res.device_type.toLowerCase().includes(searchWord)
-          )}
-          showAlert={showAlert}
-        />
-      </div>
+      <DashboardTable
+        ref={tableRef}
+        reservations={reservations.filter((res) =>
+          res.device_type.toLowerCase().includes(searchWord)
+        )}
+        showAlert={showAlert}
+      />
 
       {gettingStartedVisible && (
         <Alert

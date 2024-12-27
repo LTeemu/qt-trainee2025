@@ -17,10 +17,10 @@ export default function Header({}: Props) {
           className="flex items-center gap-x-2 font-bold"
         >
           <BiSolidUser
-            size={28}
+            size={32}
             style={{
               backgroundColor: colors.gray[300],
-              padding: 4,
+              padding: 6,
               borderRadius: 14,
             }}
           />

@@ -123,12 +123,12 @@ const ReservationCreate = () => {
 
       <Link
         to="#nowhere"
-        className="flex my-2 items-center gap-x-1 text-cyan-800 font-semibold"
+        className="flex mt-2 mb-4 items-center gap-x-1 text-cyan-800 font-semibold"
       >
         Explore more <FaChevronRight size={12} />
       </Link>
-      <div className="grid bg-gray-200 p-4 rounded-md">
-        <p className="font-semibold text-lg mb-1">Reservation</p>
+      <div className="grid bg-gray-100 border-2 p-4 md:px-8 rounded-md">
+        <p className="font-semibold text-xl mb-2">Reservation</p>
 
         <RadioButtonGroup
           options={radioOptions}

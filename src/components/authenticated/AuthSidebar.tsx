@@ -15,7 +15,7 @@ export default function AuthSidebar({}: Props) {
   };
 
   return (
-    <nav className="min-w-56 sm:h-auto p-5 border-2 flex flex-col justify-between mr-0 sm:mr-12 border-gray-200 bg-gray-100 rounded-md">
+    <nav className="min-w-56 sm:h-auto p-5 border-2 flex flex-col justify-between mr-0 sm:mr-12 bg-gray-100 rounded-md">
       <ul className="[&>li]:gap-x-4 [&>span]:gap-x-4 [&>li]:flex [&>li]:items-center [&>li]:font-semibold grid gap-y-3">
         <li className={path === "/dashboard" ? "text-cyan-900" : ""}>
           <BiGridAlt size={24} />
