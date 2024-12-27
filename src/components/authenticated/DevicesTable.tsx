@@ -25,13 +25,13 @@ const DevicesTable = ({ devices }: Props) => {
         <tr className="[&>th]:px-4 border-b-2 border-b-cyan-900 [&>th]:text-nowrap [&>th]:font-semibold [&>th]:bg-cyan-800 [&>th]:text-white [&>th]:py-2 [&>th]:border-cyan-900 [&>th]:text-start [&>th]:border-x-2">
           <th>Device Type</th>
           <th className="w-full">
-            <span className="flex justify-between gap-x-2 items-center">
+            <span className="cursor-not-allowed flex justify-between gap-x-2 items-center">
               Qt Version <LuChevronDown size={16} />
             </span>
           </th>
 
           <th>
-            <span className="flex justify-between gap-x-2 items-center">
+            <span className="cursor-not-allowed flex justify-between gap-x-2 items-center">
               Availability <LuChevronDown size={16} />
             </span>
           </th>

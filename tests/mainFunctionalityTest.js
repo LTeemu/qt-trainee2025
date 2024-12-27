@@ -1,15 +1,15 @@
 import { expect } from 'playwright/test';
 
 async function mainFunctionalityTest(page) {
-    // Navigate to the devices page
+    // Navigate to the login page
     await page.goto('http://localhost:5173/login');
 
-    // Clear local storage and check if it's empty
+    // Clear local storage and check it's empty
     await page.evaluate(() => localStorage.clear());
     const localStorageContent = await page.evaluate(() => localStorage.length);
     await expect(localStorageContent).toBe(0);
 
-    // Fill in the username
+    // Fill in invalid username
     await page.click('#usernameInput');
     await page.fill('#usernameInput', 'dummyuser2');
 
@@ -31,7 +31,7 @@ async function mainFunctionalityTest(page) {
     await expect(page.locator('#gettingStartedAlert')).toBeVisible();
     await expect(page.locator('#usernameDisplay')).toBeVisible();
 
-    // Navigate to the Reserve a device page
+    // Navigate to the devices page
     await page.click('#reserveDeviceLink');
     await page.click('#reserveDevice3');
 
@@ -51,13 +51,13 @@ async function mainFunctionalityTest(page) {
     await page.click('#reserveDeviceButton');
     await expect(page.locator('#dashboardTopAlert')).toHaveText('Success!Device reserved successfully!');
 
-    // Check the reservation details
+    // Check the reservation version
     await expect(page.locator('#reservation0Version')).toHaveText('2.1.0');
     await page.click('#ellipsisButton0');
     await expect(page.locator('#ellipsisButton0Edit')).toBeVisible();
     await page.click('#ellipsisButton0Edit');
 
-    // Edit the reservation
+    // Edit the reservation and check for success message and edited version
     await page.click('#customQtVersionDropdown');
     await page.click('#customQtVersionDropdown-option-2');
     await page.click('#durationDropdown');
@@ -68,7 +68,7 @@ async function mainFunctionalityTest(page) {
     await expect(page.locator('#dashboardTopAlert')).toHaveText('Success!Device reservation edited successfully!');
     await expect(page.locator('#reservation0Version')).toHaveText('2.2.0');
 
-    // Navigate back to the devices page and log out
+    // Navigate back to the devices page, check availability and log out
     await page.click('#devicesLink');
     await expect(page.locator('#device2AvailabilityText')).toHaveText('0 / 8 Available');
     await page.click('#logoutButton');

@@ -5,6 +5,9 @@ import { mainFunctionalityTest } from './tests/mainFunctionalityTest.js';
 const iPhone11 = devices['iPhone 11'];
 
 (async () => {
+    const headless = process.argv.includes('--headless');
+    const startTime = Date.now();
+
     // Start the local server and wait for it
     const server = exec('npm run dev');
     await new Promise((resolve) => setTimeout(resolve, 5000));
@@ -24,10 +27,11 @@ const iPhone11 = devices['iPhone 11'];
                 continue;
             }
 
+            const testStartTime = Date.now();
             console.log(`Running test on ${browserType.name()} in ${contextConfig.name} mode`);
 
             // Launch the browser
-            const browser = await browserType.launch({ headless: false });
+            const browser = await browserType.launch({ headless });
             const context = await browser.newContext(contextConfig.options);
             const page = await context.newPage();
 
@@ -36,9 +40,17 @@ const iPhone11 = devices['iPhone 11'];
 
             // Close the browser
             await browser.close();
+
+            const testEndTime = Date.now();
+            const testDuration = (testEndTime - testStartTime) / 1000;
+            console.log(`- Test on ${browserType.name()} in ${contextConfig.name} mode completed in ${testDuration} seconds`);
         }
     }
 
-    // Stop the server
+    // Stop the server and exit the process
     server.kill();
+    const endTime = Date.now();
+    const duration = (endTime - startTime) / 1000;
+    console.log(`Total test duration: ${duration} seconds`);
+    process.exit(0);
 })();

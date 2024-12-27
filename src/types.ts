@@ -28,12 +28,13 @@ export type Device = {
 }
 
 export type Reservation = {
-    device_id: number;
-    device_type: string;
-    device_version: string;
+    reservation_id: string;
     reservation_time: string;
     reservation_duration: number;
     reservation_reason: string;
+    device_id: number;
+    device_type: string;
+    device_version: string;
 }
 
 export type ReserveFormState = {

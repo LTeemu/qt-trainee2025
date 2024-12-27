@@ -17,9 +17,9 @@ import {
 const radioOptions = ["Select Qt version", "Upload your custom Qt version"];
 
 const ReservationCreate = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const device = devices.find((device) => device.id === parseInt(id));
+  const device = devices.find((device) => device.id === Number(id));
   const [selectedRadio, setSelectedRadio] = useState(0);
   const [versionDropOpen, setVersionDropOpen] = useState(false);
   const [durationDropOpen, setDurationDropOpen] = useState(false);
@@ -45,7 +45,7 @@ const ReservationCreate = () => {
   };
 
   useEffect(() => {
-    if (!device) navigate("/devices");
+    if (!id || !device) navigate("/devices");
   }, [device, navigate]);
 
   const handleRadioChange = (index: number) => {
@@ -54,17 +54,22 @@ const ReservationCreate = () => {
     setVersionDropOpen(false);
   };
 
+  const generateUniqueId = () => {
+    return `${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+  };
+
   const reserveDevice = (device: Device, form: ReserveFormState) => {
     const reservations: Reservation[] = JSON.parse(
       localStorage.getItem("reservations") ?? "[]"
     );
     const newReservation: Reservation = {
-      device_id: device.id,
-      device_type: device.type,
-      device_version: form.qtversion,
+      reservation_id: generateUniqueId(),
       reservation_time: new Date().toISOString(),
       reservation_duration: form.duration,
       reservation_reason: form.reason,
+      device_id: device.id,
+      device_type: device.type,
+      device_version: form.qtversion,
     };
     reservations.push(newReservation);
     localStorage.setItem("reservations", JSON.stringify(reservations));
@@ -178,7 +183,10 @@ const ReservationCreate = () => {
 
         <Dropdown
           baseID="durationDropdown"
-          options={Array.from({ length: 24 }, (_, i) => `${i + 1} Hour`)}
+          options={Array.from(
+            { length: 24 },
+            (_, i) => `${i + 1} ${i === 0 ? "Hour" : "Hours"}`
+          )}
           isOpen={durationDropOpen}
           setOpenStateFunc={setDurationDropOpen}
           onOptionChange={(value) =>
@@ -217,7 +225,7 @@ const ReservationCreate = () => {
           Reserve device
         </button>
 
-        <p>{JSON.stringify(formState)}</p>
+        {/* <p>{JSON.stringify(formState)}</p> */}
       </div>
     </div>
   );

@@ -22,8 +22,8 @@ export default function ReservationEdit({}: Props) {
   const navigate = useNavigate();
   const reservation = (
     JSON.parse(localStorage.getItem("reservations") || "[]") as Reservation[]
-  ).find((reservation) => reservation.device_id === Number(id));
-  const device = devices.find((device) => device.id === reservation?.device_id);
+  ).find((res) => res.reservation_id === id);
+  const device = devices.find((d) => d.id === reservation?.device_id);
   const [selectedRadio, setSelectedRadio] = useState(0);
   const [versionDropOpen, setVersionDropOpen] = useState(false);
   const [durationDropOpen, setDurationDropOpen] = useState(false);
@@ -59,14 +59,20 @@ export default function ReservationEdit({}: Props) {
   };
 
   const editReservation = (
-    reservationID: number,
+    reservationID: string,
     formState: ReserveFormState
   ) => {
     const reservations = JSON.parse(
       localStorage.getItem("reservations") || "[]"
     ) as Reservation[];
-    reservations[reservationID] = {
-      ...reservations[reservationID],
+
+    const reservationIndex = reservations.findIndex(
+      (res) => res.reservation_id === reservationID
+    );
+    if (reservationIndex === -1) return;
+
+    reservations[reservationIndex] = {
+      ...reservations[reservationIndex],
       device_version: formState.qtversion,
       reservation_time: new Date().toISOString(),
       reservation_duration: formState.duration,
@@ -77,22 +83,14 @@ export default function ReservationEdit({}: Props) {
   };
 
   const handleEdit = () => {
+    if (!id) return;
+
     if (formState.duration === 0 || formState.qtversion === "") {
       showAlert("error", "Qt version and time duration are required!");
       return;
     }
 
-    const reservations = JSON.parse(
-      localStorage.getItem("reservations") || "[]"
-    ) as Reservation[];
-    if (reservations.length < 1) return;
-
-    const reservationID = reservations.findIndex(
-      (res) => res.device_id === reservation?.device_id
-    );
-    if (reservationID === -1) return;
-
-    editReservation(reservationID, formState);
+    editReservation(id, formState);
     navigate("/dashboard", {
       state: {
         message: "Device reservation edited successfully!",
@@ -191,8 +189,13 @@ export default function ReservationEdit({}: Props) {
 
         <Dropdown
           baseID="durationDropdown"
-          options={Array.from({ length: 24 }, (_, i) => `${i + 1} Hour`)}
-          defaultValue={reservation.reservation_duration + " Hour"}
+          options={Array.from(
+            { length: 24 },
+            (_, i) => `${i + 1} ${i === 0 ? "Hour" : "Hours"}`
+          )}
+          defaultValue={`${reservation.reservation_duration} ${
+            reservation.reservation_duration === 1 ? "Hour" : "Hours"
+          }`}
           isOpen={durationDropOpen}
           setOpenStateFunc={setDurationDropOpen}
           onOptionChange={(value) =>
@@ -232,7 +235,7 @@ export default function ReservationEdit({}: Props) {
           Edit
         </button>
 
-        <p>{JSON.stringify(formState)}</p>
+        {/* <p>{JSON.stringify(formState)}</p> */}
       </div>
     </div>
   );

@@ -1,16 +1,17 @@
 import { PiStackBold, PiQuestionBold } from "react-icons/pi";
 import { BiGridAlt, BiNotepad } from "react-icons/bi";
 import { RiSettings3Line, RiLogoutBoxRLine } from "react-icons/ri";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 type Props = {};
 
 export default function AuthSidebar({}: Props) {
   const path = useLocation().pathname;
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem("logged_user");
-    window.location.href = "/login";
+    navigate("/login");
   };
 
   return (

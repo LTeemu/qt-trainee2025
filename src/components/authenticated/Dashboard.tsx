@@ -114,6 +114,7 @@ export default function Dashboard({}: Props) {
           reservations={reservations.filter((res) =>
             res.device_type.toLowerCase().includes(searchWord)
           )}
+          showAlert={showAlert}
         />
       </div>
 

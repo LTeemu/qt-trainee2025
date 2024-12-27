@@ -47,7 +47,9 @@ This project uses Playwright for testing. The `test.js` file at the root directo
    ```
 2. Run the tests:
    ```bash
-   npx playwright test test.js
+   node test.js
+   # or
+   node test.js --headless
    ```
 
 ## File Structure

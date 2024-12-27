@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { DashboardTableRef, Reservation } from "../../types";
+import { AlertType, DashboardTableRef, Reservation } from "../../types";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import EllipsisMenu from "./EllipsisMenu";
 import {
@@ -9,13 +9,15 @@ import {
   LuRotateCw,
   LuChevronDown,
 } from "react-icons/lu";
+import devices from "../../devices_dummy.json";
 
 type Props = {
   reservations: Reservation[];
+  showAlert?: (type: AlertType, message: React.ReactNode) => void;
 };
 
 const DashboardTable = forwardRef<DashboardTableRef, Props>(
-  ({ reservations }, ref) => {
+  ({ reservations, showAlert }, ref) => {
     const [tableRefreshKey, setTableRefreshKey] = useState(0);
 
     useImperativeHandle(ref, () => ({
@@ -24,25 +26,47 @@ const DashboardTable = forwardRef<DashboardTableRef, Props>(
       },
     }));
 
+    const releaseDeviceReservation = (reservation: Reservation) => {
+      if (!reservation) return;
+      const reservations: Reservation[] = JSON.parse(
+        localStorage.getItem("reservations") ?? "[]"
+      );
+      if (!reservations.length) return;
+      const updatedReservations = reservations.filter(
+        (res) => res.reservation_id !== reservation.reservation_id
+      );
+      const device = devices.find(
+        (device) => device.id === reservation.device_id
+      );
+      if (device) device.available += 1;
+      localStorage.setItem("reservations", JSON.stringify(updatedReservations));
+    };
+
+    const handleRelease = (reservation: Reservation) => {
+      if (!reservation) return;
+      releaseDeviceReservation(reservation);
+      showAlert && showAlert("success", "Reservation successfully released");
+    };
+
     const getRemainingTime = (
       reservationTime: string,
       durationInHours: number
-    ) => {
+    ): string => {
       const reservationDate = new Date(reservationTime);
-      const endTime = new Date(
+      const endTime: Date = new Date(
         reservationDate.getTime() + durationInHours * 60 * 60 * 1000
       );
-      const currentDate = new Date();
-      const differenceInMs = endTime - currentDate;
+      const currentDate: Date = new Date();
+      const differenceInMs: number = endTime.getTime() - currentDate.getTime();
       if (differenceInMs <= 0) {
         return "--:--";
       }
-      const hours = Math.floor(differenceInMs / (1000 * 60 * 60));
-      const minutes = Math.floor(
+      const hours: number = Math.floor(differenceInMs / (1000 * 60 * 60));
+      const minutes: number = Math.floor(
         (differenceInMs % (1000 * 60 * 60)) / (1000 * 60)
       );
-      const formattedHours = String(hours).padStart(2, "0");
-      const formattedMinutes = String(minutes).padStart(2, "0");
+      const formattedHours: string = String(hours).padStart(2, "0");
+      const formattedMinutes: string = String(minutes).padStart(2, "0");
       return `${formattedHours}:${formattedMinutes}`;
     };
 
@@ -51,20 +75,20 @@ const DashboardTable = forwardRef<DashboardTableRef, Props>(
         <thead>
           <tr className="[&>th]:px-4 last:[&>th]:px-1 border-b-2 border-b-cyan-900 [&>th]:text-nowrap [&>th]:font-semibold [&>th]:bg-cyan-800 [&>th]:text-white [&>th]:py-2 [&>th]:border-cyan-900 [&>th]:text-start [&>th]:border-x-2">
             <th>
-              <span className="flex justify-between gap-x-2 items-center">
+              <span className="cursor-not-allowed flex justify-between gap-x-2 items-center">
                 Device Type <LuChevronDown size={16} />
               </span>
             </th>
             <th>
-              <span className="flex justify-between gap-x-2 items-center">
+              <span className="cursor-not-allowed flex justify-between gap-x-2 items-center">
                 Qt Version <LuChevronDown size={16} />
               </span>
             </th>
             <th>Start time</th>
             <th>Duration</th>
             <th>Time remaining</th>
-            <th className="">
-              <span className="flex justify-between gap-x-2 items-center">
+            <th>
+              <span className="cursor-not-allowed flex justify-between gap-x-2 items-center">
                 Status <LuChevronDown size={16} />
               </span>
             </th>
@@ -90,7 +114,7 @@ const DashboardTable = forwardRef<DashboardTableRef, Props>(
                 >
                   <td className="py-2 px-4">
                     <Link
-                      to={`/devices/reservation/edit/${res.device_id}`}
+                      to={`/devices/reservation/edit/${res.reservation_id}`}
                       className="text-cyan-900 font-semibold"
                     >
                       {res.device_type}
@@ -111,7 +135,9 @@ const DashboardTable = forwardRef<DashboardTableRef, Props>(
                   </td>
 
                   <td className="py-2 px-4 border-b">
-                    {res.reservation_duration + " Hours"}
+                    {`${res.reservation_duration} ${
+                      res.reservation_duration === 1 ? "Hour" : "Hours"
+                    }`}
                   </td>
 
                   <td className="py-2 px-4 border-b">{remainingTime}</td>
@@ -135,21 +161,21 @@ const DashboardTable = forwardRef<DashboardTableRef, Props>(
                         <button
                           id={`ellipsisButton${index}Refresh`}
                           onClick={() => null}
-                          className="flex items-center gap-x-2"
+                          className="flex items-center gap-x-2 opacity-50 pointer-events-none"
                         >
                           <LuRotateCw size={16} /> Refresh
                         </button>,
                         <button
                           id={`ellipsisButton${index}Reboot`}
                           onClick={() => null}
-                          className="flex items-center gap-x-2"
+                          className="flex items-center gap-x-2 opacity-50 pointer-events-none"
                         >
                           <LuRefreshCw size={16} />
                           Reboot
                         </button>,
                         <button
                           id={`ellipsisButton${index}Release`}
-                          onClick={() => null}
+                          onClick={() => handleRelease(res)}
                           className="flex items-center gap-x-2"
                         >
                           <LuCircleX size={16} />
@@ -157,7 +183,7 @@ const DashboardTable = forwardRef<DashboardTableRef, Props>(
                         </button>,
                         <Link
                           id={`ellipsisButton${index}Edit`}
-                          to={`/devices/reservation/edit/${res.device_id}`}
+                          to={`/devices/reservation/edit/${res.reservation_id}`}
                           className="flex items-center gap-x-2"
                         >
                           <LuNotebookPen size={16} />

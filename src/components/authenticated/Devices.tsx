@@ -27,12 +27,12 @@ export default function Devices({}: Props) {
         <div className="flex gap-x-2 my-2">
           <SearchInput onChange={(e) => setSearchWord(e.target.value)} />
 
-          <button className="bg-white rounded-md border-gray-200 border-2 flex gap-x-2 items-center px-2">
+          <button className="cursor-not-allowed bg-white rounded-md border-gray-200 border-2 flex gap-x-2 items-center px-2">
             <MdSwapVert size={20} />
             <span>Update</span>
           </button>
 
-          <button className="bg-white rounded-md border-gray-200 border-2 flex gap-x-2 items-center px-2">
+          <button className="cursor-not-allowed bg-white rounded-md border-gray-200 border-2 flex gap-x-2 items-center px-2">
             <MdOutlineRefresh size={20} />
             <span>Update</span>
           </button>
