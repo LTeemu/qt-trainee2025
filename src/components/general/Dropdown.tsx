@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { GoChevronDown } from "react-icons/go";
 
 type DropdownProps = {
@@ -22,6 +22,8 @@ const Dropdown = ({
   defaultValue,
   baseID,
 }: DropdownProps) => {
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+
   const [selectedOption, setSelectedOption] = useState<string>(
     defaultValue ?? ""
   );
@@ -32,8 +34,20 @@ const Dropdown = ({
     onOptionChange(option);
   };
 
+  const handleBlur = () => {
+    setTimeout(() => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(document.activeElement)
+      ) {
+        setOpenStateFunc(false);
+      }
+    }, 0);
+  };
+
   return (
     <div
+      ref={dropdownRef}
       className={`relative inline-block text-left text-nowrap ${containerClassName}`}
     >
       <div>
@@ -46,6 +60,7 @@ const Dropdown = ({
               selectedOption === "" ? "text-black/60" : ""
             }`}
           onClick={() => setOpenStateFunc(!isOpen)}
+          onBlur={handleBlur}
         >
           {selectedOption || placeholder || "Select an option"}
 

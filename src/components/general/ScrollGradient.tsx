@@ -2,11 +2,16 @@ import { useEffect, useState, SyntheticEvent, useCallback } from "react";
 import { throttle } from "lodash";
 
 type ScrollGradientProps = {
-  e?: SyntheticEvent<HTMLElement>;
+  e: SyntheticEvent<HTMLElement> | undefined;
+  scrollRef: React.RefObject<HTMLDivElement>;
   targetOffsetX?: number;
 };
 
-const ScrollGradient = ({ e, targetOffsetX = 15 }: ScrollGradientProps) => {
+const ScrollGradient = ({
+  e,
+  scrollRef,
+  targetOffsetX = 15,
+}: ScrollGradientProps) => {
   const [scrollPosition, setScrollPosition] = useState<{
     isAtLeft: boolean;
     isAtRight: boolean;
@@ -48,6 +53,27 @@ const ScrollGradient = ({ e, targetOffsetX = 15 }: ScrollGradientProps) => {
       setScrollPosition({ isAtLeft: true, isAtRight: true });
     }
   }, [e, throttledHandleScroll]);
+
+  // Trigger handleScroll on mount and resize to set initial state
+  useEffect(() => {
+    const triggerScrollEvent = () => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollLeft = targetOffsetX;
+        const event = new Event("scroll", { bubbles: true });
+        scrollRef.current.dispatchEvent(event);
+      }
+    };
+    const resizeObserver = new ResizeObserver(triggerScrollEvent);
+    if (scrollRef.current) {
+      resizeObserver.observe(scrollRef.current);
+    }
+    triggerScrollEvent();
+    return () => {
+      if (scrollRef.current) {
+        resizeObserver.unobserve(scrollRef.current);
+      }
+    };
+  }, [scrollRef]);
 
   return (
     <div

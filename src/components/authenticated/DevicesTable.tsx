@@ -1,4 +1,4 @@
-import { SyntheticEvent, useEffect, useState } from "react";
+import { SyntheticEvent, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaChevronRight } from "react-icons/fa";
 import { LuChevronDown } from "react-icons/lu";
@@ -11,6 +11,7 @@ type Props = {
 
 const DevicesTable = ({ devices }: Props) => {
   const [reservedIds, setReservedIds] = useState<Number[]>([]);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
   const [scrollEvent, setScrollEvent] = useState<
     SyntheticEvent<HTMLElement, Event> | undefined
   >(undefined);
@@ -30,6 +31,7 @@ const DevicesTable = ({ devices }: Props) => {
   return (
     <div className="grid relative">
       <div
+        ref={scrollRef}
         onScroll={handleScroll}
         className="grid flex-col max-w-full overflow-x-auto shadow-md relative"
       >
@@ -131,7 +133,11 @@ const DevicesTable = ({ devices }: Props) => {
         </table>
       </div>
 
-      <ScrollGradient e={scrollEvent} targetOffsetX={15} />
+      <ScrollGradient
+        scrollRef={scrollRef}
+        e={scrollEvent}
+        targetOffsetX={15}
+      />
     </div>
   );
 };

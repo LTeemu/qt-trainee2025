@@ -4,6 +4,7 @@ import {
   forwardRef,
   SyntheticEvent,
   useImperativeHandle,
+  useRef,
   useState,
 } from "react";
 import EllipsisMenu from "./EllipsisMenu";
@@ -25,6 +26,7 @@ type Props = {
 const DashboardTable = forwardRef<DashboardTableRef, Props>(
   ({ reservations, showAlert }, ref) => {
     const [tableRefreshKey, setTableRefreshKey] = useState(0);
+    const scrollRef = useRef<HTMLDivElement | null>(null);
     const [scrollEvent, setScrollEvent] = useState<
       SyntheticEvent<HTMLElement, Event> | undefined
     >(undefined);
@@ -86,6 +88,7 @@ const DashboardTable = forwardRef<DashboardTableRef, Props>(
     return (
       <div className="grid relative">
         <div
+          ref={scrollRef}
           onScroll={handleScroll}
           className="grid flex-col max-w-full overflow-x-auto shadow-md relative"
         >
@@ -227,7 +230,11 @@ const DashboardTable = forwardRef<DashboardTableRef, Props>(
           </table>
         </div>
 
-        <ScrollGradient e={scrollEvent} targetOffsetX={15} />
+        <ScrollGradient
+          scrollRef={scrollRef}
+          e={scrollEvent}
+          targetOffsetX={15}
+        />
       </div>
     );
   }
