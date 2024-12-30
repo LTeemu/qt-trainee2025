@@ -1,22 +1,22 @@
-import { Link } from "react-router-dom";
-import { AlertType, DashboardTableRef, Reservation } from "../../types";
+import { Link } from 'react-router-dom';
+import { AlertType, DashboardTableRef, Reservation } from '../../types';
 import {
   forwardRef,
   SyntheticEvent,
   useImperativeHandle,
   useRef,
   useState,
-} from "react";
-import EllipsisMenu from "./EllipsisMenu";
+} from 'react';
+import EllipsisMenu from './EllipsisMenu';
 import {
   LuCircleX,
   LuNotebookPen,
   LuRefreshCw,
   LuRotateCw,
   LuChevronDown,
-} from "react-icons/lu";
-import devices from "../../devices_dummy.json";
-import ScrollGradient from "../general/ScrollGradient";
+} from 'react-icons/lu';
+import devices from '../../devices_dummy.json';
+import ScrollGradient from '../general/ScrollGradient';
 
 type Props = {
   reservations: Reservation[];
@@ -44,44 +44,44 @@ const DashboardTable = forwardRef<DashboardTableRef, Props>(
     const releaseDeviceReservation = (reservation: Reservation) => {
       if (!reservation) return;
       const reservations: Reservation[] = JSON.parse(
-        localStorage.getItem("reservations") ?? "[]"
+        localStorage.getItem('reservations') ?? '[]',
       );
       if (!reservations.length) return;
       const updatedReservations = reservations.filter(
-        (res) => res.reservation_id !== reservation.reservation_id
+        (res) => res.reservation_id !== reservation.reservation_id,
       );
       const device = devices.find(
-        (device) => device.id === reservation.device_id
+        (device) => device.id === reservation.device_id,
       );
       if (device) device.available += 1;
-      localStorage.setItem("reservations", JSON.stringify(updatedReservations));
+      localStorage.setItem('reservations', JSON.stringify(updatedReservations));
     };
 
     const handleRelease = (reservation: Reservation) => {
       if (!reservation) return;
       releaseDeviceReservation(reservation);
-      showAlert && showAlert("success", "Reservation successfully released");
+      showAlert && showAlert('success', 'Reservation successfully released');
     };
 
     const getRemainingTime = (
       reservationTime: string,
-      durationInHours: number
+      durationInHours: number,
     ): string => {
       const reservationDate = new Date(reservationTime);
       const endTime: Date = new Date(
-        reservationDate.getTime() + durationInHours * 60 * 60 * 1000
+        reservationDate.getTime() + durationInHours * 60 * 60 * 1000,
       );
       const currentDate: Date = new Date();
       const differenceInMs: number = endTime.getTime() - currentDate.getTime();
       if (differenceInMs <= 0) {
-        return "--:--";
+        return '--:--';
       }
       const hours: number = Math.floor(differenceInMs / (1000 * 60 * 60));
       const minutes: number = Math.floor(
-        (differenceInMs % (1000 * 60 * 60)) / (1000 * 60)
+        (differenceInMs % (1000 * 60 * 60)) / (1000 * 60),
       );
-      const formattedHours: string = String(hours).padStart(2, "0");
-      const formattedMinutes: string = String(minutes).padStart(2, "0");
+      const formattedHours: string = String(hours).padStart(2, '0');
+      const formattedMinutes: string = String(minutes).padStart(2, '0');
       return `${formattedHours}:${formattedMinutes}`;
     };
 
@@ -124,9 +124,9 @@ const DashboardTable = forwardRef<DashboardTableRef, Props>(
                 reservations.map((res, index) => {
                   const remainingTime = getRemainingTime(
                     res.reservation_time,
-                    res.reservation_duration
+                    res.reservation_duration,
                   );
-                  const expired = remainingTime === "--:--";
+                  const expired = remainingTime === '--:--';
 
                   return (
                     <tr
@@ -157,7 +157,7 @@ const DashboardTable = forwardRef<DashboardTableRef, Props>(
 
                       <td className="py-2 px-4 border-b">
                         {`${res.reservation_duration} ${
-                          res.reservation_duration === 1 ? "Hour" : "Hours"
+                          res.reservation_duration === 1 ? 'Hour' : 'Hours'
                         }`}
                       </td>
 
@@ -167,11 +167,11 @@ const DashboardTable = forwardRef<DashboardTableRef, Props>(
                         <span
                           className={`rounded-full px-2 py-0.5 ${
                             expired
-                              ? "bg-red-200 text-red-800"
-                              : "text-green-800 bg-green-200"
+                              ? 'bg-red-200 text-red-800'
+                              : 'text-green-800 bg-green-200'
                           }`}
                         >
-                          {expired ? "Expired" : "Ready"}
+                          {expired ? 'Expired' : 'Ready'}
                         </span>
                       </td>
 
@@ -237,7 +237,7 @@ const DashboardTable = forwardRef<DashboardTableRef, Props>(
         />
       </div>
     );
-  }
+  },
 );
 
 export default DashboardTable;

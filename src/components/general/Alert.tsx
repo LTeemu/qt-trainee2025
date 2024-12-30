@@ -1,5 +1,5 @@
-import { IoMdClose } from "react-icons/io";
-import { AlertProps } from "../../types";
+import { IoMdClose } from 'react-icons/io';
+import { AlertProps } from '../../types';
 
 export default function Alert({
   type,
@@ -11,19 +11,19 @@ export default function Alert({
 }: AlertProps) {
   const alertStyles = {
     success: {
-      bgColor: "bg-green-200",
-      textColor: "text-green-800",
-      defaultTitle: "Success!",
+      bgColor: 'bg-green-200',
+      textColor: 'text-green-800',
+      defaultTitle: 'Success!',
     },
     error: {
-      bgColor: "bg-red-200",
-      textColor: "text-red-800",
-      defaultTitle: "Error!",
+      bgColor: 'bg-red-200',
+      textColor: 'text-red-800',
+      defaultTitle: 'Error!',
     },
     info: {
-      bgColor: "bg-gray-200",
-      textColor: "text-gray-800",
-      defaultTitle: "Info",
+      bgColor: 'bg-gray-200',
+      textColor: 'text-gray-800',
+      defaultTitle: 'Info',
     },
   };
 

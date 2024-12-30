@@ -1,7 +1,7 @@
-import { Outlet } from "react-router-dom";
-import Header from "./AuthHeader";
-import Footer from "./AuthFooter";
-import AuthSidebar from "./AuthSidebar";
+import { Outlet } from 'react-router-dom';
+import Header from './AuthHeader';
+import Footer from './AuthFooter';
+import AuthSidebar from './AuthSidebar';
 const AuthLayout = () => {
   return (
     <div className="flex flex-1 flex-col min-h-[100dvh] overflow-hidden">

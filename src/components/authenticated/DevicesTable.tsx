@@ -1,9 +1,9 @@
-import { SyntheticEvent, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
-import { FaChevronRight } from "react-icons/fa";
-import { LuChevronDown } from "react-icons/lu";
-import { Device } from "../../types";
-import ScrollGradient from "../general/ScrollGradient";
+import { SyntheticEvent, useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { FaChevronRight } from 'react-icons/fa';
+import { LuChevronDown } from 'react-icons/lu';
+import { Device } from '../../types';
+import ScrollGradient from '../general/ScrollGradient';
 
 type Props = {
   devices: Device[];
@@ -21,7 +21,7 @@ const DevicesTable = ({ devices }: Props) => {
   };
 
   useEffect(() => {
-    const storedIds = localStorage.getItem("reserved_ids");
+    const storedIds = localStorage.getItem('reserved_ids');
     if (storedIds) {
       const ids = JSON.parse(storedIds);
       setReservedIds(ids);
@@ -70,7 +70,7 @@ const DevicesTable = ({ devices }: Props) => {
                         id={`reserveDevice${device.id}`}
                         to={`/devices/reservation/create/${device.id}`}
                         className={`text-cyan-900 font-semibold ${
-                          cantReserve ? "pointer-events-none opacity-50" : ""
+                          cantReserve ? 'pointer-events-none opacity-50' : ''
                         }`}
                       >
                         {device.type}
@@ -92,8 +92,8 @@ const DevicesTable = ({ devices }: Props) => {
                         className={`rounded-full px-2 py-0.5
                     ${
                       device.available === 0
-                        ? "bg-red-200 text-red-800"
-                        : "bg-green-200 text-green-800"
+                        ? 'bg-red-200 text-red-800'
+                        : 'bg-green-200 text-green-800'
                     }`}
                       >
                         {device.available} / {device.count} Available
@@ -103,7 +103,7 @@ const DevicesTable = ({ devices }: Props) => {
                       <Link
                         to={`/devices/reservation/create/${device.id}`}
                         className={`flex items-center gap-x-2 text-cyan-900 font-semibold ${
-                          cantReserve ? "pointer-events-none opacity-50" : ""
+                          cantReserve ? 'pointer-events-none opacity-50' : ''
                         }`}
                       >
                         {reservedIds.includes(device.id) ? (

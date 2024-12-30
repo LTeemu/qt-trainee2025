@@ -1,5 +1,5 @@
-import { useRef, useState } from "react";
-import { GoChevronDown } from "react-icons/go";
+import { useRef, useState } from 'react';
+import { GoChevronDown } from 'react-icons/go';
 
 type DropdownProps = {
   options: string[];
@@ -25,7 +25,7 @@ const Dropdown = ({
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const [selectedOption, setSelectedOption] = useState<string>(
-    defaultValue ?? ""
+    defaultValue ?? '',
   );
 
   const handleOptionClick = (option: string) => {
@@ -57,18 +57,18 @@ const Dropdown = ({
           className={`inline-flex justify-between w-full rounded-md border-2 border-gray-300 
             px-4 py-2 bg-white text-sm text-gray-700 
             hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
-              selectedOption === "" ? "text-black/60" : ""
+              selectedOption === '' ? 'text-black/60' : ''
             }`}
           onClick={() => setOpenStateFunc(!isOpen)}
           onBlur={handleBlur}
         >
-          {selectedOption || placeholder || "Select an option"}
+          {selectedOption || placeholder || 'Select an option'}
 
           <GoChevronDown
             size={12}
             color="black"
             className={`-mr-1 ml-2 h-5 w-5 transition-transform duration-200 ${
-              isOpen ? "rotate-180" : "rotate-0"
+              isOpen ? 'rotate-180' : 'rotate-0'
             }`}
           />
         </button>

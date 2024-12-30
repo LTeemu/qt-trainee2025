@@ -1,27 +1,27 @@
-import { useEffect, useRef, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import SearchInput from "../general/SearchInput";
-import { MdOutlineRefresh } from "react-icons/md";
-import DashboardTable from "./DashboardTable";
-import Alert from "../general/Alert";
+import { useEffect, useRef, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import SearchInput from '../general/SearchInput';
+import { MdOutlineRefresh } from 'react-icons/md';
+import DashboardTable from './DashboardTable';
+import Alert from '../general/Alert';
 import {
   AlertState,
   AlertType,
   DashboardTableRef,
   Reservation,
-} from "../../types";
+} from '../../types';
 
 type Props = {};
 
 export default function Dashboard({}: Props) {
   const location = useLocation();
   const reservations: Reservation[] = JSON.parse(
-    localStorage.getItem("reservations") ?? "[]"
+    localStorage.getItem('reservations') ?? '[]',
   );
-  const [searchWord, setSearchWord] = useState("");
+  const [searchWord, setSearchWord] = useState('');
   const [alert, setAlert] = useState<AlertState>({
-    type: "error",
-    message: "",
+    type: 'error',
+    message: '',
     isVisible: false,
   });
   const tableRef = useRef<DashboardTableRef>(null);
@@ -44,18 +44,18 @@ export default function Dashboard({}: Props) {
   };
 
   useEffect(() => {
-    const firstTime = localStorage.getItem("first-time-login");
+    const firstTime = localStorage.getItem('first-time-login');
 
     if (!firstTime) {
       setIsFirstTimeLogin(true);
       setGettingStartedVisible(true);
-      localStorage.setItem("first-time-login", "false");
+      localStorage.setItem('first-time-login', 'false');
     }
   }, []);
 
   useEffect(() => {
     const message = location.state?.message;
-    const type = location.state?.type || "error";
+    const type = location.state?.type || 'error';
     if (message) {
       showAlert(type, message);
     }
@@ -64,13 +64,13 @@ export default function Dashboard({}: Props) {
   return (
     <div className="grid h-min max-h-full w-full">
       <h1 id="dashboardHeading" className="text-4xl">
-        {isFirstTimeLogin ? "Welcome" : "Dashboard"}
+        {isFirstTimeLogin ? 'Welcome' : 'Dashboard'}
       </h1>
 
       <p className="mt-3 mb-6">
         {isFirstTimeLogin
           ? "Welcome to the Qt Hardware Cloud App! Here's a quick guide to help you get started: Explore available devices, reserve them for your projects, and manage your reservations easily, follow the instructions to get connected and start working."
-          : "The dashboard shows all your current device reservations. To view connection instructions or manage your reservation, click on the device name or the desired row."}
+          : 'The dashboard shows all your current device reservations. To view connection instructions or manage your reservation, click on the device name or the desired row.'}
       </p>
 
       {alert.isVisible && (
@@ -113,7 +113,7 @@ export default function Dashboard({}: Props) {
       <DashboardTable
         ref={tableRef}
         reservations={reservations.filter((res) =>
-          res.device_type.toLowerCase().includes(searchWord)
+          res.device_type.toLowerCase().includes(searchWord),
         )}
         showAlert={showAlert}
       />

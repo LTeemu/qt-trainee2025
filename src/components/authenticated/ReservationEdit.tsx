@@ -1,19 +1,19 @@
-import { useEffect, useState } from "react";
-import Dropdown from "../general/Dropdown";
-import { IoCloudUploadOutline } from "react-icons/io5";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { FaChevronRight } from "react-icons/fa";
-import RadioButtonGroup from "../general/RadioButtonGroup";
-import devices from "../../devices_dummy.json";
+import { useEffect, useState } from 'react';
+import Dropdown from '../general/Dropdown';
+import { IoCloudUploadOutline } from 'react-icons/io5';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { FaChevronRight } from 'react-icons/fa';
+import RadioButtonGroup from '../general/RadioButtonGroup';
+import devices from '../../devices_dummy.json';
 import {
   AlertState,
   AlertType,
   Reservation,
   ReserveFormState,
-} from "../../types";
-import Alert from "../general/Alert";
+} from '../../types';
+import Alert from '../general/Alert';
 
-const radioOptions = ["Select Qt version", "Upload your custom Qt version"];
+const radioOptions = ['Select Qt version', 'Upload your custom Qt version'];
 
 type Props = {};
 
@@ -21,7 +21,7 @@ export default function ReservationEdit({}: Props) {
   const { id } = useParams();
   const navigate = useNavigate();
   const reservation = (
-    JSON.parse(localStorage.getItem("reservations") || "[]") as Reservation[]
+    JSON.parse(localStorage.getItem('reservations') || '[]') as Reservation[]
   ).find((res) => res.reservation_id === id);
   const device = devices.find((d) => d.id === reservation?.device_id);
   const [selectedRadio, setSelectedRadio] = useState(0);
@@ -29,8 +29,8 @@ export default function ReservationEdit({}: Props) {
   const [durationDropOpen, setDurationDropOpen] = useState(false);
 
   const [alert, setAlert] = useState<AlertState>({
-    type: "error",
-    message: "",
+    type: 'error',
+    message: '',
     isVisible: false,
   });
 
@@ -43,13 +43,13 @@ export default function ReservationEdit({}: Props) {
   };
 
   useEffect(() => {
-    if (!device) navigate("/devices");
+    if (!device) navigate('/devices');
   }, [device, navigate]);
 
   const [formState, setFormState] = useState<ReserveFormState>({
     qtversion: reservation?.device_version ?? (device?.versions[0] as string),
     duration: reservation?.reservation_duration ?? 1,
-    reason: reservation?.reservation_reason ?? "",
+    reason: reservation?.reservation_reason ?? '',
   });
 
   const handleRadioChange = (index: number) => {
@@ -60,14 +60,14 @@ export default function ReservationEdit({}: Props) {
 
   const editReservation = (
     reservationID: string,
-    formState: ReserveFormState
+    formState: ReserveFormState,
   ) => {
     const reservations = JSON.parse(
-      localStorage.getItem("reservations") || "[]"
+      localStorage.getItem('reservations') || '[]',
     ) as Reservation[];
 
     const reservationIndex = reservations.findIndex(
-      (res) => res.reservation_id === reservationID
+      (res) => res.reservation_id === reservationID,
     );
     if (reservationIndex === -1) return;
 
@@ -79,27 +79,27 @@ export default function ReservationEdit({}: Props) {
       reservation_reason: formState.reason,
     };
 
-    localStorage.setItem("reservations", JSON.stringify(reservations));
+    localStorage.setItem('reservations', JSON.stringify(reservations));
   };
 
   const handleEdit = () => {
     if (!id) return;
 
     if (selectedRadio === 1) {
-      showAlert("error", "Custom Qt version feature unavailable");
+      showAlert('error', 'Custom Qt version feature unavailable');
       return;
     }
 
-    if (formState.duration === 0 || formState.qtversion === "") {
-      showAlert("error", "Qt version and time duration are required!");
+    if (formState.duration === 0 || formState.qtversion === '') {
+      showAlert('error', 'Qt version and time duration are required!');
       return;
     }
 
     editReservation(id, formState);
-    navigate("/dashboard", {
+    navigate('/dashboard', {
       state: {
-        message: "Device reservation edited successfully!",
-        type: "success",
+        message: 'Device reservation edited successfully!',
+        type: 'success',
       },
     });
   };
@@ -159,8 +159,8 @@ export default function ReservationEdit({}: Props) {
             placeholder="Custom Qt version"
             containerClassName={`w-full lg:w-1/2 ${
               selectedRadio === 0
-                ? ""
-                : "opacity-50 contrast-50 pointer-events-none"
+                ? ''
+                : 'opacity-50 contrast-50 pointer-events-none'
             }`}
           />
 
@@ -169,12 +169,12 @@ export default function ReservationEdit({}: Props) {
           overflow-clip flex items-center justify-between 
           bg-white border-2 rounded-md border-gray-300 ${
             selectedRadio === 1
-              ? ""
-              : "opacity-50 contrast-50 pointer-events-none"
+              ? ''
+              : 'opacity-50 contrast-50 pointer-events-none'
           }`}
           >
             <span className="whitespace-pre-wrap text-nowrap">
-              Drag & drop file or{" "}
+              Drag & drop file or{' '}
               <span className="text-cyan-800 font-semibold underline cursor-not-allowed">
                 browse
               </span>
@@ -188,7 +188,7 @@ export default function ReservationEdit({}: Props) {
         </div>
 
         <p className="mt-2 mb-1">
-          Select time duration{" "}
+          Select time duration{' '}
           {selectedRadio === 0 && <span className="text-red-700"> *</span>}
         </p>
 
@@ -196,10 +196,10 @@ export default function ReservationEdit({}: Props) {
           baseID="durationDropdown"
           options={Array.from(
             { length: 24 },
-            (_, i) => `${i + 1} ${i === 0 ? "Hour" : "Hours"}`
+            (_, i) => `${i + 1} ${i === 0 ? 'Hour' : 'Hours'}`,
           )}
           defaultValue={`${reservation.reservation_duration} ${
-            reservation.reservation_duration === 1 ? "Hour" : "Hours"
+            reservation.reservation_duration === 1 ? 'Hour' : 'Hours'
           }`}
           isOpen={durationDropOpen}
           setOpenStateFunc={setDurationDropOpen}

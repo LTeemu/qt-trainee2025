@@ -1,5 +1,5 @@
-import { useEffect, useState, SyntheticEvent, useCallback } from "react";
-import { throttle } from "lodash";
+import { useEffect, useState, SyntheticEvent, useCallback } from 'react';
+import { throttle } from 'lodash';
 
 type ScrollGradientProps = {
   e: SyntheticEvent<HTMLElement> | undefined;
@@ -39,7 +39,7 @@ const ScrollGradient = ({
         return { isAtLeft, isAtRight: !hasScrollBar || isAtRight };
       });
     },
-    [targetOffsetX]
+    [targetOffsetX],
   );
 
   const throttledHandleScroll = useCallback(throttle(handleScroll, 300), [
@@ -59,7 +59,7 @@ const ScrollGradient = ({
     const triggerScrollEvent = () => {
       if (scrollRef.current) {
         scrollRef.current.scrollLeft = targetOffsetX;
-        const event = new Event("scroll", { bubbles: true });
+        const event = new Event('scroll', { bubbles: true });
         scrollRef.current.dispatchEvent(event);
       }
     };
@@ -78,17 +78,17 @@ const ScrollGradient = ({
   return (
     <div
       style={{
-        position: "absolute",
+        position: 'absolute',
         zIndex: 999,
-        height: "100%",
-        width: "100%",
+        height: '100%',
+        width: '100%',
         top: 0,
         left: 0,
-        pointerEvents: "none",
+        pointerEvents: 'none',
         background: `linear-gradient(to right, ${
-          scrollPosition.isAtLeft ? "transparent" : "rgba(0,0,0,0.2)"
+          scrollPosition.isAtLeft ? 'transparent' : 'rgba(0,0,0,0.2)'
         } 0%, transparent 3%, transparent 97%, ${
-          scrollPosition.isAtRight ? "transparent" : "rgba(0,0,0,0.2)"
+          scrollPosition.isAtRight ? 'transparent' : 'rgba(0,0,0,0.2)'
         } 100%)`,
       }}
     />

@@ -1,13 +1,13 @@
-import devices from "../../devices_dummy.json";
-import DeviceTable from "./DevicesTable";
-import SearchInput from "../general/SearchInput";
-import { MdOutlineRefresh, MdSwapVert } from "react-icons/md";
-import { useState } from "react";
+import devices from '../../devices_dummy.json';
+import DeviceTable from './DevicesTable';
+import SearchInput from '../general/SearchInput';
+import { MdOutlineRefresh, MdSwapVert } from 'react-icons/md';
+import { useState } from 'react';
 
 type Props = {};
 
 export default function Devices({}: Props) {
-  const [searchWord, setSearchWord] = useState("");
+  const [searchWord, setSearchWord] = useState('');
 
   return (
     <div className="grid h-min max-h-full">
@@ -44,7 +44,7 @@ export default function Devices({}: Props) {
 
         <DeviceTable
           devices={devices.filter((dev) =>
-            dev.type.toLowerCase().includes(searchWord)
+            dev.type.toLowerCase().includes(searchWord),
           )}
         />
       </div>

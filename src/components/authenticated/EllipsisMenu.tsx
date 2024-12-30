@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from "react";
-import { IoEllipsisVertical } from "react-icons/io5";
+import { useState, useRef, useEffect } from 'react';
+import { IoEllipsisVertical } from 'react-icons/io5';
 
 type Props = {
   buttons: React.ReactNode[];
@@ -39,16 +39,16 @@ export default function EllipsisMenu(props: Props) {
         disabled={disabled || false}
         className="block"
       >
-        <IoEllipsisVertical size={22} color={isOpen ? "#00FF00" : "black"} />
+        <IoEllipsisVertical size={22} color={isOpen ? '#00FF00' : 'black'} />
       </button>
 
       <div
         ref={dropdownRef}
         className={`absolute border-2 shadow-[0px_3px_3px_0px_#00000055] right-full transition-all text-black overflow-hidden duration-200 bg-white rounded-md top-1/2 -translate-y-1/2 flex ${
-          isOpen ? "opacity-1" : "opacity-0"
+          isOpen ? 'opacity-1' : 'opacity-0'
         }`}
         style={{
-          maxWidth: isOpen ? `${maxWidth}px` : "0",
+          maxWidth: isOpen ? `${maxWidth}px` : '0',
         }}
       >
         {buttons.map((button, index) => (

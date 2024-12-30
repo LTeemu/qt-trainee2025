@@ -1,11 +1,11 @@
-import QTLogo from "../general/QTLogo";
-import { BiSolidUser } from "react-icons/bi";
-import colors from "tailwindcss/colors";
+import QTLogo from '../general/QTLogo';
+import { BiSolidUser } from 'react-icons/bi';
+import colors from 'tailwindcss/colors';
 
 type Props = {};
 
 export default function Header({}: Props) {
-  const loggedUser = localStorage.getItem("logged_user");
+  const loggedUser = localStorage.getItem('logged_user');
 
   return (
     <header className="sm:flex-row flex-col justify-between py-3 px-4 flex shadow-[0px_3px_3px_0px_#1a202c22]">

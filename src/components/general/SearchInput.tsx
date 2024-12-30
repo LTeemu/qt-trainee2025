@@ -1,4 +1,4 @@
-import { FaSearch } from "react-icons/fa";
+import { FaSearch } from 'react-icons/fa';
 
 type Props = {
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;

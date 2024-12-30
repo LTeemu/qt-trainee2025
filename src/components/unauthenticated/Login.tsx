@@ -1,21 +1,21 @@
-import { FormEvent, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Alert from "../general/Alert";
-import { AlertState, AlertType } from "../../types";
+import { FormEvent, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Alert from '../general/Alert';
+import { AlertState, AlertType } from '../../types';
 
 type Props = {};
 
 export default function Login({}: Props) {
-  const [username, setUsername] = useState("dummyuser");
-  const [password, setPassword] = useState("dummypass");
+  const [username, setUsername] = useState('dummyuser');
+  const [password, setPassword] = useState('dummypass');
   const [alert, setAlert] = useState<AlertState>({
-    type: "error",
-    message: "",
+    type: 'error',
+    message: '',
     isVisible: false,
   });
 
   const [localStorageData, setLocalStorageData] = useState(
-    JSON.stringify(localStorage, null, 2)
+    JSON.stringify(localStorage, null, 2),
   );
 
   const clearLocalStorage = () => {
@@ -36,18 +36,18 @@ export default function Login({}: Props) {
   const handleLogin = (e: FormEvent) => {
     e.preventDefault();
     hideAlert();
-    if (username === "dummyuser" && password === "dummypass") {
-      localStorage.setItem("logged_user", username);
-      navigate("/dashboard");
+    if (username === 'dummyuser' && password === 'dummypass') {
+      localStorage.setItem('logged_user', username);
+      navigate('/dashboard');
     } else {
-      localStorage.removeItem("logged_user");
+      localStorage.removeItem('logged_user');
       showAlert(
-        "error",
+        'error',
         <p>
-          Invalid credentials, try{" "}
-          <span className="text-green-600">dummyuser</span> &{" "}
+          Invalid credentials, try{' '}
+          <span className="text-green-600">dummyuser</span> &{' '}
           <span className="text-green-600">dummypass</span>
-        </p>
+        </p>,
       );
     }
   };

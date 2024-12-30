@@ -1,20 +1,20 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
-import devices from "../../devices_dummy.json";
-import { FaChevronRight } from "react-icons/fa";
-import { IoCloudUploadOutline } from "react-icons/io5";
-import Dropdown from "../general/Dropdown";
-import RadioButtonGroup from "../general/RadioButtonGroup";
-import Alert from "../general/Alert";
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import devices from '../../devices_dummy.json';
+import { FaChevronRight } from 'react-icons/fa';
+import { IoCloudUploadOutline } from 'react-icons/io5';
+import Dropdown from '../general/Dropdown';
+import RadioButtonGroup from '../general/RadioButtonGroup';
+import Alert from '../general/Alert';
 import {
   AlertState,
   AlertType,
   Device,
   Reservation,
   ReserveFormState,
-} from "../../types";
+} from '../../types';
 
-const radioOptions = ["Select Qt version", "Upload your custom Qt version"];
+const radioOptions = ['Select Qt version', 'Upload your custom Qt version'];
 
 const ReservationCreate = () => {
   const { id } = useParams<{ id: string }>();
@@ -25,14 +25,14 @@ const ReservationCreate = () => {
   const [durationDropOpen, setDurationDropOpen] = useState(false);
 
   const [formState, setFormState] = useState<ReserveFormState>({
-    qtversion: "",
+    qtversion: '',
     duration: 0,
-    reason: "",
+    reason: '',
   });
 
   const [alert, setAlert] = useState<AlertState>({
-    type: "error",
-    message: "",
+    type: 'error',
+    message: '',
     isVisible: false,
   });
 
@@ -45,7 +45,7 @@ const ReservationCreate = () => {
   };
 
   useEffect(() => {
-    if (!id || !device) navigate("/devices");
+    if (!id || !device) navigate('/devices');
   }, [device, navigate]);
 
   const handleRadioChange = (index: number) => {
@@ -60,7 +60,7 @@ const ReservationCreate = () => {
 
   const reserveDevice = (device: Device, form: ReserveFormState) => {
     const reservations: Reservation[] = JSON.parse(
-      localStorage.getItem("reservations") ?? "[]"
+      localStorage.getItem('reservations') ?? '[]',
     );
     const newReservation: Reservation = {
       reservation_id: generateUniqueId(),
@@ -72,7 +72,7 @@ const ReservationCreate = () => {
       device_version: form.qtversion,
     };
     reservations.push(newReservation);
-    localStorage.setItem("reservations", JSON.stringify(reservations));
+    localStorage.setItem('reservations', JSON.stringify(reservations));
   };
 
   const handleReserve = () => {
@@ -80,25 +80,25 @@ const ReservationCreate = () => {
     if (!device) return;
 
     if (selectedRadio === 1) {
-      showAlert("error", "Custom Qt version feature unavailable");
+      showAlert('error', 'Custom Qt version feature unavailable');
       return;
     }
 
-    if (formState.duration === 0 || formState.qtversion === "") {
-      showAlert("error", "Qt version and time duration are required!");
+    if (formState.duration === 0 || formState.qtversion === '') {
+      showAlert('error', 'Qt version and time duration are required!');
       return;
     }
 
     if (device.available > 0) {
       device.available -= 1;
       reserveDevice(device, formState);
-      navigate("/dashboard", {
-        state: { message: "Device reserved successfully!", type: "success" },
+      navigate('/dashboard', {
+        state: { message: 'Device reserved successfully!', type: 'success' },
       });
     } else {
       showAlert(
-        "error",
-        "The device is not available, please try again or choose another device!"
+        'error',
+        'The device is not available, please try again or choose another device!',
       );
     }
   };
@@ -153,8 +153,8 @@ const ReservationCreate = () => {
             placeholder="Custom Qt version"
             containerClassName={`w-full lg:w-1/2 ${
               selectedRadio === 0
-                ? ""
-                : "opacity-50 contrast-50 pointer-events-none"
+                ? ''
+                : 'opacity-50 contrast-50 pointer-events-none'
             }`}
           />
 
@@ -163,12 +163,12 @@ const ReservationCreate = () => {
           overflow-clip flex items-center justify-between 
           bg-white border-2 rounded-md border-gray-300 ${
             selectedRadio === 1
-              ? ""
-              : "opacity-50 contrast-50 pointer-events-none"
+              ? ''
+              : 'opacity-50 contrast-50 pointer-events-none'
           }`}
           >
             <span className="whitespace-pre-wrap text-nowrap">
-              Drag & drop file or{" "}
+              Drag & drop file or{' '}
               <span className="text-cyan-800 font-semibold underline cursor-not-allowed">
                 browse
               </span>
@@ -190,7 +190,7 @@ const ReservationCreate = () => {
           baseID="durationDropdown"
           options={Array.from(
             { length: 24 },
-            (_, i) => `${i + 1} ${i === 0 ? "Hour" : "Hours"}`
+            (_, i) => `${i + 1} ${i === 0 ? 'Hour' : 'Hours'}`,
           )}
           isOpen={durationDropOpen}
           setOpenStateFunc={setDurationDropOpen}
